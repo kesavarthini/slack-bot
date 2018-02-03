@@ -1,7 +1,7 @@
 - alias: hasura
   config:
     configmap: controller-conf
-    namespace: gingham45-hasura
+    namespace: hasura
   data: null
-  kubeContext: gingham45
-  name: gingham45
+  kubeContext: dependability70
+  name: dependability70
