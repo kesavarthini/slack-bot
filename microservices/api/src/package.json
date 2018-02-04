@@ -8,10 +8,15 @@
   "author": "Jaison",
   "license": "ISC",
   "dependencies": {
+    "@slack/client": "^3.16.0",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
+    "fetch": "^1.1.0",
+    "method-override": "^2.3.10",
     "multer": "^1.3.0",
-    "request": "^2.83.0"
+    "node-fetch": "^1.7.3",
+    "request": "^2.83.0",
+    "slack-client": "^2.0.6"
   }
 }

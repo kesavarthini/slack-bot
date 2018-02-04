@@ -6,14 +6,118 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var methodOverride = require('method-override');
 var os = require('os');
-app.use(cookieParser())
+var fetchAction =  require('node-fetch');
+app.use(cookieParser());
+app.use(bodyParser());
+app.use(methodOverride());
+
+function fetchCoumnsFromTable(fetch_input_array){
 
 
+	fetchAction(url, requestOptions)
+	.then(function(response) {
+		//console.log(response.json());
+		console.log(response.json());
+		return response.json();
+	})
+	.then(function(result) {
+		//console.log(result);
+		return result;
+	})
+	.catch(function(error) {
+		return ('Request Failed:' + error);
+	});
+}
 
 app.get('/', function(req, res) {
  res.send('Hello World!-Kesavarthini');
 });
+app.post('/fetch_limited_records_from_table', function(req,res){
+	console.log("request..");
+	var fetch_input = req.body.text;
+	var fetch_input_array = [];
+	if(fetch_input){
+		fetch_input_array = req.body.text.split(" ");
+	}
+	if(!(fetch_input_array[0] && fetch_input_array[1] && fetch_input_array[2])){
+		res.send("Invalid Params");
+	}
+
+	var url = "https://data.dependability70.hasura-app.io/v1/query";
+
+	var requestOptions = {
+	    "method": "POST",
+	    "headers": {
+	        "Content-Type": "application/json"
+	    }
+	};
+
+	var query = {
+	    "type": "select",
+	    "args": {
+	        "table": fetch_input_array[0],
+	        "columns": [
+	            "*"
+	        ],
+	        "order_by": [
+	            {
+	                "column": fetch_input_array[1],
+	                "order": "desc"
+	            }
+	        ],
+	        "limit": fetch_input_array[2]
+	    }
+	};
+
+	requestOptions.body = JSON.stringify(query);
+
+	fetchAction(url, requestOptions)
+	.then(function(response) {
+		return response.json();
+	})
+	.then(function(result) {
+		res.json(result);
+	})
+	.catch(function(error) {
+		res.send('Request Failed:' + error);
+	});
+
+})
+
+
+
+app.post('/num', function(req, res) {
+	if(req.body.text != "users"){
+		res.send("Invalid request");
+	}
+	var url = "https://auth.dependability70.hasura-app.io/v1/user/info";
+
+	// If you have the auth token saved in offline storage
+	// var authToken = window.localStorage.getItem('HASURA_AUTH_TOKEN');
+	// headers = { "Authorization" : "Bearer " + authToken }
+	var requestOptions = {
+	    "method": "GET",
+	    "headers": {
+	        "Content-Type": "application/json",
+	        "Authorization": "Bearer 9488b273f62ced5cd19cb3055693a7dc63c2fae1cc75bfd6"
+	    }
+	};
+
+	fetchAction(url, requestOptions)
+	.then(function(response) {
+		return response.json();
+	})
+	.then(function(result) {
+		console.log(result);
+		res.json(result);
+	})
+	.catch(function(error) {
+		res.send('Request Failed:' + error);
+	});
+});
+
 
   //Set a route /set-cookie to set cookie name and value
 app.get('/set-cookie', function(req, res) {
