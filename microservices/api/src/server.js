@@ -34,6 +34,8 @@ function fetchCoumnsFromTable(fetch_input_array){
 app.get('/', function(req, res) {
  res.send('Hello World!-Kesavarthini');
 });
+
+
 app.post('/fetch_limited_records_from_table', function(req,res){
 	console.log("request..");
 	var fetch_input = req.body.text;
@@ -45,7 +47,7 @@ app.post('/fetch_limited_records_from_table', function(req,res){
 		res.send("Invalid Params");
 	}
 
-	var url = "https://data.dependability70.hasura-app.io/v1/query";
+	var url = "https://data.gulch80.hasura-app.io/v1/query";
 
 	var requestOptions = {
 	    "method": "POST",
@@ -92,25 +94,39 @@ app.post('/num', function(req, res) {
 	if(req.body.text != "users"){
 		res.send("Invalid request");
 	}
-	var url = "https://auth.dependability70.hasura-app.io/v1/user/info";
+	
+	var url = "https://data.gulch80.hasura-app.io/v1/query";
 
-	// If you have the auth token saved in offline storage
-	// var authToken = window.localStorage.getItem('HASURA_AUTH_TOKEN');
-	// headers = { "Authorization" : "Bearer " + authToken }
+	headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer b770c0b94944d12a1f2397a46f422afccb68703590bf9386"
+	}
+
 	var requestOptions = {
-	    "method": "GET",
-	    "headers": {
-	        "Content-Type": "application/json",
-	        "Authorization": "Bearer 9488b273f62ced5cd19cb3055693a7dc63c2fae1cc75bfd6"
+	    "method": "POST",
+	    "headers": headers
+	};
+
+	var query = {
+	    "type": "count",
+	    "args": {
+	        "table": {
+	        	"name": "users",
+	        	"schema": "hauth_catalog"
+	        },
+	        "columns": [
+	            "*"
+	        ]
 	    }
 	};
+
+	requestOptions.body = JSON.stringify(query);
 
 	fetchAction(url, requestOptions)
 	.then(function(response) {
 		return response.json();
 	})
 	.then(function(result) {
-		console.log(result);
 		res.json(result);
 	})
 	.catch(function(error) {
@@ -152,6 +168,45 @@ app.get('/input', function(req, res) {
    res.end(JSON.stringify(req.body.input_value));
 });
 });
+
+//signup
+app.get('/sign-up', function(req, res) {
+    res.sendFile(path.join(__dirname + '/signup.html'));
+   app.post('/signup', urlencodedParser, function (req, res) {
+   	var url = "https://auth.gulch80.hasura-app.io/v1/signup";
+
+	var requestOptions = {
+	    "method": "POST",
+	    "headers": {
+        "Content-Type": "application/json"
+    	}
+	};
+
+	var query = {
+	   "provider": "username",
+        "data": {
+            "username": req.body.username,
+            "password": req.body.password
+        }
+	};
+
+
+	requestOptions.body = JSON.stringify(query);
+
+	fetchAction(url, requestOptions)
+	.then(function(response) {
+		return response.json();
+	})
+	.then(function(result) {
+		res.end(JSON.stringify(result));
+	})
+	.catch(function(error) {
+		res.send('Request Failed:' + error);
+	});
+
+	});
+});
+
 
 app.get('/authors',function(req,res){
             var h={};
