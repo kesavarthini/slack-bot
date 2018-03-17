@@ -1,7 +1,7 @@
 - alias: hasura
   config:
     configmap: controller-conf
-    namespace: hasura
+    namespace: gulch80-hasura
   data: null
-  kubeContext: dependability70
-  name: dependability70
+  kubeContext: gulch80
+  name: gulch80
